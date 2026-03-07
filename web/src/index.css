@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* CIT-U Identity: Maroon, White, Yellow */
+    --background: 0 0% 99%;
+    --foreground: 0 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 20% 12%;
+
+    /* Maroon primary */
+    --primary: 0 100% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Light maroon tint */
+    --secondary: 0 30% 95%;
+    --secondary-foreground: 0 100% 25%;
+
+    /* Muted warm gray */
+    --muted: 30 10% 95%;
+    --muted-foreground: 0 5% 45%;
+
+    /* Yellow accent */
+    --accent: 45 100% 51%;
+    --accent-foreground: 0 20% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 0 100% 25%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --maroon: 0 100% 25%;
+    --maroon-light: 0 60% 35%;
+    --maroon-dark: 0 100% 18%;
+    --yellow: 45 100% 51%;
+    --yellow-light: 45 100% 70%;
+    --yellow-dark: 40 100% 42%;
+    --warm-gray: 30 10% 96%;
+    --warm-gray-dark: 30 8% 60%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 100% 25%), hsl(0 100% 18%));
+    --gradient-accent: linear-gradient(135deg, hsl(45 100% 51%), hsl(40 100% 42%));
+    --gradient-hero: linear-gradient(160deg, hsl(0 100% 22%), hsl(0 80% 15%), hsl(0 100% 25%));
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.06);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.08);
+    --shadow-lg: 0 8px 30px hsl(0 0% 0% / 0.1);
+    --shadow-accent: 0 4px 20px hsl(45 100% 51% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 20% 12%;
+    --sidebar-primary: 0 100% 25%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 45 100% 51%;
+    --sidebar-accent-foreground: 0 20% 12%;
+    --sidebar-border: 30 15% 90%;
+    --sidebar-ring: 0 100% 25%;
+  }
+
+  .dark {
+    --background: 0 15% 8%;
+    --foreground: 0 0% 95%;
+    --card: 0 12% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 12% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 100% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 20% 18%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 10% 18%;
+    --muted-foreground: 0 5% 55%;
+    --accent: 45 100% 51%;
+    --accent-foreground: 0 20% 12%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 10% 20%;
+    --input: 0 10% 20%;
+    --ring: 0 100% 35%;
+    --sidebar-background: 0 12% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 100% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 45 100% 51%;
+    --sidebar-accent-foreground: 0 20% 12%;
+    --sidebar-border: 0 10% 20%;
+    --sidebar-ring: 0 100% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-accent {
+    box-shadow: var(--shadow-accent);
+  }
+}
