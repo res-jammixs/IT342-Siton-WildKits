@@ -24,9 +24,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (currentAdmin) {
       // Convert AdminResponse to AuthUser format
       const adminUser: AuthUser = {
-        userId: currentAdmin.adminId,
+        userId: currentAdmin.adminId.toString(),
         name: currentAdmin.name,
         email: currentAdmin.email,
+        studentId: 'N/A',
+        department: 'N/A',
+        yearLevel: 'N/A',
         accountStatus: 'ACTIVE',
         createdAt: currentAdmin.createdAt,
         isAdmin: true,
@@ -78,9 +81,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           
           // Convert AdminResponse to AuthUser format
           const adminUser: AuthUser = {
-            userId: adminData.adminId,
+            userId: adminData.adminId.toString(),
             name: adminData.name,
             email: adminData.email,
+            studentId: 'N/A',
+            department: 'N/A',
+            yearLevel: 'N/A',
             accountStatus: 'ACTIVE',
             createdAt: adminData.createdAt,
             isAdmin: true,
@@ -115,10 +121,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string, studentId: string, department: string, yearLevel: string) => {
     try {
       setLoading(true);
-      const userData = await authAPI.register({ name, email, password });
+      const userData = await authAPI.register({ name, email, password, studentId, department, yearLevel });
       
       // Save user data
       authAPI.saveUser(userData);

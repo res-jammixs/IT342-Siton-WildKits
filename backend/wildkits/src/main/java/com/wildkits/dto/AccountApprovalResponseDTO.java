@@ -1,6 +1,7 @@
 package com.wildkits.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.wildkits.enums.ApprovalStatus;
 
@@ -18,7 +19,7 @@ public class AccountApprovalResponseDTO {
     private Long approvalId;
     private LocalDateTime approvalDate;
     private ApprovalStatus status;
-    private Long userId;
+    private UUID userId;
     private String userName;
     private Long adminId;
     private String adminName;

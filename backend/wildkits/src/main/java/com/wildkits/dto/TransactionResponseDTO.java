@@ -1,6 +1,7 @@
 package com.wildkits.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.wildkits.enums.TransactionStatus;
 import com.wildkits.enums.TransactionType;
@@ -20,7 +21,7 @@ public class TransactionResponseDTO {
     private TransactionType type;
     private LocalDateTime transactionDate;
     private TransactionStatus status;
-    private Long userId;
+    private UUID userId;
     private String userName;
     private Long productId;
     private String productTitle;

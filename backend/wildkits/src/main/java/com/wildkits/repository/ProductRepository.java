@@ -1,6 +1,7 @@
 package com.wildkits.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +16,7 @@ import com.wildkits.enums.ProductType;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     
     @Query("SELECT p FROM Product p WHERE p.user.userId = :userId")
-    List<Product> findByUserId(@Param("userId") Long userId);
+    List<Product> findByUserId(@Param("userId") UUID userId);
     
     List<Product> findByStatus(ProductStatus status);
     

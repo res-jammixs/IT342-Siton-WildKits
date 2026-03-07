@@ -50,7 +50,7 @@ public class AccountApprovalServiceImpl implements AccountApprovalService {
         // Update user account status
         user.setAccountStatus(
             requestDTO.getStatus() == ApprovalStatus.APPROVED 
-                ? com.wildkits.enums.AccountStatus.APPROVED 
+                ? com.wildkits.enums.AccountStatus.VERIFIED 
                 : com.wildkits.enums.AccountStatus.REJECTED
         );
         userRepository.save(user);

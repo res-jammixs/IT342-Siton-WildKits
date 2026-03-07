@@ -1,6 +1,7 @@
 package com.wildkits.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import com.wildkits.enums.ProductType;
 
@@ -37,5 +38,5 @@ public class ProductRequestDTO {
     private ProductType type;
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
 }

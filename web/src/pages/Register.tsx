@@ -29,6 +29,9 @@ export default function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [studentId, setStudentId] = useState("");
+  const [department, setDepartment] = useState("");
+  const [yearLevel, setYearLevel] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
@@ -78,6 +81,33 @@ export default function Register() {
       return;
     }
 
+    if (!studentId.trim() || !/^\d{2}-\d{4}-\d{3}$/.test(studentId)) {
+      toast({
+        title: "Validation Error",
+        description: "Student ID must follow format XX-XXXX-XXX (e.g., 21-1234-567).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!department) {
+      toast({
+        title: "Validation Error",
+        description: "Please select your department.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!yearLevel) {
+      toast({
+        title: "Validation Error",
+        description: "Please select your year level.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (password.length < 6) {
       toast({
         title: "Validation Error",
@@ -98,13 +128,43 @@ export default function Register() {
 
     setIsSubmitting(true);
     try {
-      await registerUser(fullName, email, password);
+      await registerUser(fullName, email, password, studentId, department, yearLevel);
       router.push('/dashboard');
     } catch (error) {
       console.error('Registration error:', error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleStepClick = (targetStep: number) => {
+    // Only allow going back or staying on current step
+    // Cannot jump ahead without validation
+    if (targetStep > currentStep) {
+      // Trying to jump ahead - validate current step first
+      if (currentStep === 1) {
+        if (!firstName.trim() || !lastName.trim() || !email.trim() || !email.includes('@')) {
+          toast({
+            title: "Complete Current Step",
+            description: "Please fill in all fields before proceeding.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } else if (currentStep === 2) {
+        if (!studentId.trim() || !/^\d{2}-\d{4}-\d{3}$/.test(studentId) || !department || !yearLevel) {
+          toast({
+            title: "Complete Current Step",
+            description: "Please fill in all fields before proceeding.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+    }
+    
+    // Allow navigation
+    setCurrentStep(targetStep);
   };
 
   const handleNextStep = () => {
@@ -122,6 +182,33 @@ export default function Register() {
         toast({
           title: "Validation Error",
           description: "Please enter a valid email address.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
+    if (currentStep === 2) {
+      if (!studentId.trim() || !/^\d{2}-\d{4}-\d{3}$/.test(studentId)) {
+        toast({
+          title: "Validation Error",
+          description: "Student ID must follow format XX-XXXX-XXX (e.g., 21-1234-567).",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!department) {
+        toast({
+          title: "Validation Error",
+          description: "Please select your department.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!yearLevel) {
+        toast({
+          title: "Validation Error",
+          description: "Please select your year level.",
           variant: "destructive",
         });
         return;
@@ -173,14 +260,16 @@ export default function Register() {
             {steps.map((step, i) => (
               <div key={step.id} className="flex items-center gap-2">
                 <button
-                  onClick={() => setCurrentStep(step.id)}
+                  type="button"
+                  onClick={() => handleStepClick(step.id)}
+                  disabled={isSubmitting}
                   className={`flex h-10 items-center gap-2 rounded-full px-4 text-xs font-semibold transition-all ${
                     currentStep === step.id
                       ? "bg-primary text-primary-foreground shadow-md"
                       : currentStep > step.id
-                      ? "bg-accent/20 text-accent-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                      ? "bg-accent/20 text-accent-foreground cursor-pointer hover:bg-accent/30"
+                      : "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                  } ${isSubmitting ? "cursor-not-allowed opacity-50" : ""}`}
                 >
                   {currentStep > step.id ? (
                     <CheckCircle2 className="h-4 w-4 text-accent" />
@@ -277,10 +366,13 @@ export default function Register() {
                     <div className="relative">
                       <IdCard className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
-                        placeholder="XX-XXXX-XXX"
+                        placeholder="21-1234-567"
                         className="border-0 bg-transparent pl-7 shadow-none focus-visible:ring-0"
+                        value={studentId}
+                        onChange={(e) => setStudentId(e.target.value)}
                         onFocus={() => setFocused("studentId")}
                         onBlur={() => setFocused(null)}
+                        required
                       />
                     </div>
                   </div>
@@ -289,17 +381,27 @@ export default function Register() {
                     <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Department
                     </Label>
-                    <Select>
+                    <Select value={department} onValueChange={setDepartment}>
                       <SelectTrigger className="border-0 bg-transparent shadow-none focus:ring-0">
                         <SelectValue placeholder="Select your department" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ccs">College of Computer Studies</SelectItem>
-                        <SelectItem value="coe">College of Engineering</SelectItem>
-                        <SelectItem value="cas">College of Arts & Sciences</SelectItem>
-                        <SelectItem value="cba">College of Business Admin</SelectItem>
-                        <SelectItem value="ced">College of Education</SelectItem>
-                        <SelectItem value="cn">College of Nursing</SelectItem>
+                        <SelectItem value="COMPUTER_SCIENCE">Computer Science</SelectItem>
+                        <SelectItem value="INFORMATION_TECHNOLOGY">Information Technology</SelectItem>
+                        <SelectItem value="COMPUTER_ENGINEERING">Computer Engineering</SelectItem>
+                        <SelectItem value="ELECTRONICS_ENGINEERING">Electronics Engineering</SelectItem>
+                        <SelectItem value="ELECTRICAL_ENGINEERING">Electrical Engineering</SelectItem>
+                        <SelectItem value="CIVIL_ENGINEERING">Civil Engineering</SelectItem>
+                        <SelectItem value="MECHANICAL_ENGINEERING">Mechanical Engineering</SelectItem>
+                        <SelectItem value="ARCHITECTURE">Architecture</SelectItem>
+                        <SelectItem value="BUSINESS_ADMINISTRATION">Business Administration</SelectItem>
+                        <SelectItem value="ACCOUNTANCY">Accountancy</SelectItem>
+                        <SelectItem value="NURSING">Nursing</SelectItem>
+                        <SelectItem value="EDUCATION">Education</SelectItem>
+                        <SelectItem value="ARTS_AND_SCIENCES">Arts and Sciences</SelectItem>
+                        <SelectItem value="HOSPITALITY_MANAGEMENT">Hospitality Management</SelectItem>
+                        <SelectItem value="TOURISM_MANAGEMENT">Tourism Management</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -308,16 +410,17 @@ export default function Register() {
                     <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Year Level
                     </Label>
-                    <Select>
+                    <Select value={yearLevel} onValueChange={setYearLevel}>
                       <SelectTrigger className="border-0 bg-transparent shadow-none focus:ring-0">
                         <SelectValue placeholder="Select year level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">1st Year</SelectItem>
-                        <SelectItem value="2">2nd Year</SelectItem>
-                        <SelectItem value="3">3rd Year</SelectItem>
-                        <SelectItem value="4">4th Year</SelectItem>
-                        <SelectItem value="5">5th Year</SelectItem>
+                        <SelectItem value="FIRST_YEAR">1st Year</SelectItem>
+                        <SelectItem value="SECOND_YEAR">2nd Year</SelectItem>
+                        <SelectItem value="THIRD_YEAR">3rd Year</SelectItem>
+                        <SelectItem value="FOURTH_YEAR">4th Year</SelectItem>
+                        <SelectItem value="FIFTH_YEAR">5th Year</SelectItem>
+                        <SelectItem value="GRADUATE">Graduate</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

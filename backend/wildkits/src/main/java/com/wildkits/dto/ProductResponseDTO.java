@@ -2,6 +2,7 @@ package com.wildkits.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.wildkits.enums.ProductStatus;
 import com.wildkits.enums.ProductType;
@@ -24,6 +25,6 @@ public class ProductResponseDTO {
     private ProductType type;
     private ProductStatus status;
     private LocalDateTime createdAt;
-    private Long userId;
+    private UUID userId;
     private String userName;
 }
