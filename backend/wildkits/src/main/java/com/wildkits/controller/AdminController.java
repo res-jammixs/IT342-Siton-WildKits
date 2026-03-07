@@ -1,5 +1,6 @@
 package com.wildkits.controller;
 
+import com.wildkits.dto.AdminLoginRequestDTO;
 import com.wildkits.dto.AdminRequestDTO;
 import com.wildkits.dto.AdminResponseDTO;
 import com.wildkits.service.AdminService;
@@ -26,6 +27,13 @@ public class AdminController {
         log.info("Received request to create admin with email: {}", requestDTO.getEmail());
         AdminResponseDTO response = adminService.createAdmin(requestDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AdminResponseDTO> login(@Valid @RequestBody AdminLoginRequestDTO requestDTO) {
+        log.info("Received admin login request for email: {}", requestDTO.getEmail());
+        AdminResponseDTO response = adminService.login(requestDTO);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
