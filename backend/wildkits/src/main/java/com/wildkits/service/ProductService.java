@@ -1,6 +1,7 @@
 package com.wildkits.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.wildkits.dto.ProductRequestDTO;
 import com.wildkits.dto.ProductResponseDTO;
@@ -13,7 +14,7 @@ public interface ProductService {
     
     List<ProductResponseDTO> getAllProducts();
     
-    List<ProductResponseDTO> getProductsByUserId(Long userId);
+    List<ProductResponseDTO> getProductsByUserId(UUID userId);
     
     ProductResponseDTO updateProduct(Long productId, ProductRequestDTO requestDTO);
     

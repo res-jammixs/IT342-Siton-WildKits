@@ -1,5 +1,7 @@
 package com.wildkits.dto;
 
+import java.util.UUID;
+
 import com.wildkits.enums.ApprovalStatus;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class AccountApprovalRequestDTO {
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
 
     @NotNull(message = "Admin ID is required")
     private Long adminId;

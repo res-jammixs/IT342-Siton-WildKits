@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -43,7 +44,7 @@ public class ProductController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ProductResponseDTO>> getProductsByUserId(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByUserId(@PathVariable("userId") UUID userId) {
         log.info("Received request to get products for user ID: {}", userId);
         List<ProductResponseDTO> products = productService.getProductsByUserId(userId);
         return ResponseEntity.ok(products);

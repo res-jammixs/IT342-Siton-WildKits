@@ -1,6 +1,7 @@
 package com.wildkits.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TransactionResponseDTO> getTransactionsByUserId(Long userId) {
+    public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId) {
         log.info("Fetching transactions for user ID: {}", userId);
         
         return transactionRepository.findByUserId(userId).stream()

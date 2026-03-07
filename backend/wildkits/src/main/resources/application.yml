@@ -28,6 +28,12 @@ spring:
       write-dates-as-timestamps: false
     time-zone: UTC
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 server:
   port: 8080
   error:
@@ -39,3 +45,21 @@ logging:
     com.wildkits: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:wildkits_super_secret_key_change_in_production_2024_very_long_key_for_security}
+  expiration: 86400000 # 24 hours in milliseconds
+
+# Supabase Storage Configuration
+# IMPORTANT: You must create the storage bucket for registration to work!
+# 
+# Next Steps:
+#   1. Go to Supabase Dashboard > Storage
+#   2. Create a new bucket named "student-id-images" (set as Private)
+#   3. Set RLS policies (see REGISTRATION_ERROR_FIX.md for SQL)
+#
+supabase:
+  url: ${SUPABASE_URL:https://qgofibwesdynvlnwnkgz.supabase.co}
+  api-key: ${SUPABASE_API_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnb2ZpYndlc2R5bnZsbndua2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTQ0MTYsImV4cCI6MjA4ODM5MDQxNn0.6evSOfs-NEw8DFRQwFHvlxPXBkvAJ9JtKOMSqT9opL4}
+  storage-bucket: student-id-images

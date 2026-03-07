@@ -3,6 +3,7 @@ package com.wildkits.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +28,24 @@ public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public AdminResponseDTO createAdmin(AdminRequestDTO requestDTO) {
         log.info("Creating new admin with email: {}", requestDTO.getEmail());
         
+        // Check for duplicate email
         if (adminRepository.existsByEmail(requestDTO.getEmail())) {
             throw new DuplicateResourceException("Admin with email " + requestDTO.getEmail() + " already exists");
         }
         
+        // Convert DTO to entity
         Admin admin = adminMapper.toEntity(requestDTO);
+        
+        // Hash the password before saving
+        String hashedPassword = passwordEncoder.encode(requestDTO.getPassword());
+        admin.setPassword(hashedPassword);
+        
         Admin savedAdmin = adminRepository.save(admin);
         
         log.info("Admin created successfully with ID: {}", savedAdmin.getAdminId());
@@ -51,8 +60,8 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findByEmail(requestDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid email or password"));
         
-        // Simple password check
-        if (!admin.getPassword().equals(requestDTO.getPassword())) {
+        // Verify password using BCrypt
+        if (!passwordEncoder.matches(requestDTO.getPassword(), admin.getPassword())) {
             throw new ResourceNotFoundException("Invalid email or password");
         }
         

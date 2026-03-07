@@ -52,6 +52,9 @@ export interface UserRegistrationData {
   name: string;
   email: string;
   password: string;
+  studentId: string;
+  department: string;
+  yearLevel: string;
 }
 
 export interface LoginCredentials {
@@ -60,9 +63,12 @@ export interface LoginCredentials {
 }
 
 export interface UserResponse {
-  userId: number;
+  userId: string;
   name: string;
   email: string;
+  studentId: string;
+  department: string;
+  yearLevel: string;
   accountStatus: string;
   createdAt: string;
 }
@@ -82,7 +88,7 @@ export interface ProductData {
   type: 'SELL' | 'LEND';
   category: string;
   condition?: string;
-  userId: number;
+  userId: string;
 }
 
 export interface ProductResponse {
@@ -94,7 +100,7 @@ export interface ProductResponse {
   category: string;
   condition: string;
   status: string;
-  userId: number;
+  userId: string;
   userName: string;
   createdAt: string;
 }

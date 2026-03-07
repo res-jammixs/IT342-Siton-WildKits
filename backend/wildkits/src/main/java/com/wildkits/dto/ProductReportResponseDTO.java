@@ -1,6 +1,7 @@
 package com.wildkits.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.wildkits.enums.ReportStatus;
 
@@ -19,7 +20,7 @@ public class ProductReportResponseDTO {
     private String reason;
     private LocalDateTime reportDate;
     private ReportStatus status;
-    private Long reporterUserId;
+    private UUID reporterUserId;
     private String reporterName;
     private Long productId;
     private String productTitle;

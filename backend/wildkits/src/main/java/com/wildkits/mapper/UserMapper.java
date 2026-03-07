@@ -15,7 +15,10 @@ public class UserMapper {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
-                .accountStatus(AccountStatus.PENDING)
+                .studentId(dto.getStudentId())
+                .department(dto.getDepartment())
+                .yearLevel(dto.getYearLevel())
+                .accountStatus(AccountStatus.UNVERIFIED)
                 .build();
     }
 
@@ -24,6 +27,9 @@ public class UserMapper {
                 .userId(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .studentId(user.getStudentId())
+                .department(user.getDepartment())
+                .yearLevel(user.getYearLevel())
                 .accountStatus(user.getAccountStatus())
                 .createdAt(user.getCreatedAt())
                 .build();

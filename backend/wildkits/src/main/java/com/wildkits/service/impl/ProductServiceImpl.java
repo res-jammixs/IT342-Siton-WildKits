@@ -1,6 +1,7 @@
 package com.wildkits.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -67,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductResponseDTO> getProductsByUserId(Long userId) {
+    public List<ProductResponseDTO> getProductsByUserId(UUID userId) {
         log.info("Fetching products for user ID: {}", userId);
         
         return productRepository.findByUserId(userId).stream()

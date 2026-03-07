@@ -1,8 +1,8 @@
 package com.wildkits.enums;
 
 public enum AccountStatus {
-    PENDING,
-    APPROVED,
+    UNVERIFIED,
+    VERIFIED,
     REJECTED,
     SUSPENDED
 }

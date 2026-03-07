@@ -3,7 +3,11 @@ package com.wildkits.controller;
 import com.wildkits.dto.AdminLoginRequestDTO;
 import com.wildkits.dto.AdminRequestDTO;
 import com.wildkits.dto.AdminResponseDTO;
+import com.wildkits.dto.UserResponseDTO;
+import com.wildkits.dto.VerifyUserRequest;
+import com.wildkits.enums.AccountStatus;
 import com.wildkits.service.AdminService;
+import com.wildkits.service.UserService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admins")
@@ -21,6 +26,7 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<AdminResponseDTO> createAdmin(@Valid @RequestBody AdminRequestDTO requestDTO) {
@@ -48,5 +54,15 @@ public class AdminController {
         log.info("Received request to get admin with ID: {}", adminId);
         AdminResponseDTO admin = adminService.getAdminById(adminId);
         return ResponseEntity.ok(admin);
+    }
+
+    @PatchMapping("/verify/{userId}")
+    public ResponseEntity<UserResponseDTO> verifyUser(
+            @PathVariable("userId") UUID userId,
+            @Valid @RequestBody VerifyUserRequest request) {
+        log.info("Received request to verify user with ID: {} - Status: {}", userId, request.getStatus());
+        AccountStatus status = AccountStatus.valueOf(request.getStatus());
+        UserResponseDTO response = userService.updateUserStatus(userId, status);
+        return ResponseEntity.ok(response);
     }
 }

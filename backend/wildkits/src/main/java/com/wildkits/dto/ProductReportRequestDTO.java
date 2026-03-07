@@ -1,5 +1,7 @@
 package com.wildkits.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,7 +21,7 @@ public class ProductReportRequestDTO {
     private String reason;
 
     @NotNull(message = "Reporter user ID is required")
-    private Long reporterUserId;
+    private UUID reporterUserId;
 
     @NotNull(message = "Product ID is required")
     private Long productId;

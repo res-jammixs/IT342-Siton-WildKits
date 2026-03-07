@@ -1,5 +1,7 @@
 package com.wildkits.dto;
 
+import java.util.UUID;
+
 import com.wildkits.enums.TransactionType;
 
 import javax.validation.constraints.NotNull;
@@ -18,7 +20,7 @@ public class TransactionRequestDTO {
     private TransactionType type;
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
 
     @NotNull(message = "Product ID is required")
     private Long productId;
