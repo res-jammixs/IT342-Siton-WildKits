@@ -30,8 +30,12 @@ public class SupabaseStorageService implements FileStorageService {
     private void validateConfiguration() {
         if (supabaseApiKey == null || supabaseApiKey.equals("your_supabase_anon_key_here")) {
             throw new IllegalStateException(
-                "Supabase API key is not configured. Please set SUPABASE_API_KEY environment variable or update application.yml"
+                "Supabase API key is not configured. Please set SUPABASE_SERVICE_ROLE_KEY environment variable or update application.yml"
             );
+        }
+        if (supabaseApiKey.contains("\"role\":\"anon\"")) {
+            log.warn("WARNING: Using anon key instead of service_role key. This may cause upload failures due to RLS policies.");
+            log.warn("Please use the service_role key for backend file uploads. See FIX_STORAGE_403_ERROR.md");
         }
         if (supabaseUrl == null || supabaseUrl.isEmpty()) {
             throw new IllegalStateException("Supabase URL is not configured");
