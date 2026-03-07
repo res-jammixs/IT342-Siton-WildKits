@@ -64,7 +64,21 @@ export const authAPI = {
         createdAt: response.data.createdAt,
       };
     } catch (error) {
-      throw error.response?.data?.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', error);
+      
+      // Handle network errors
+      if (!error.response) {
+        throw 'Cannot connect to server. Please make sure the backend is running on http://localhost:8080';
+      }
+      
+      // Handle validation errors
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const errorMessages = error.response.data.errors.map(err => err.message || err).join(', ');
+        throw errorMessages;
+      }
+      
+      // Handle generic error message
+      throw error.response?.data?.message || error.response?.data?.error || 'Registration failed. Please try again.';
     }
   },
 
@@ -84,7 +98,21 @@ export const authAPI = {
         createdAt: response.data.createdAt,
       };
     } catch (error) {
-      throw error.response?.data?.message || 'Login failed. Please check your credentials.';
+      console.error('Login error:', error);
+      
+      // Handle network errors
+      if (!error.response) {
+        throw 'Cannot connect to server. Please make sure the backend is running on http://localhost:8080';
+      }
+      
+      // Handle validation errors
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const errorMessages = error.response.data.errors.map(err => err.message || err).join(', ');
+        throw errorMessages;
+      }
+      
+      // Handle generic error message
+      throw error.response?.data?.message || error.response?.data?.error || 'Login failed. Please check your credentials.';
     }
   },
 
