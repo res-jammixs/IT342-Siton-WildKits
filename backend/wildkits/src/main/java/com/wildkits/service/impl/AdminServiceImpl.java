@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.wildkits.dto.AdminLoginRequestDTO;
 import com.wildkits.dto.AdminRequestDTO;
 import com.wildkits.dto.AdminResponseDTO;
 import com.wildkits.entity.Admin;
@@ -40,6 +41,23 @@ public class AdminServiceImpl implements AdminService {
         
         log.info("Admin created successfully with ID: {}", savedAdmin.getAdminId());
         return adminMapper.toResponseDTO(savedAdmin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdminResponseDTO login(AdminLoginRequestDTO requestDTO) {
+        log.info("Attempting admin login for email: {}", requestDTO.getEmail());
+        
+        Admin admin = adminRepository.findByEmail(requestDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid email or password"));
+        
+        // Simple password check
+        if (!admin.getPassword().equals(requestDTO.getPassword())) {
+            throw new ResourceNotFoundException("Invalid email or password");
+        }
+        
+        log.info("Admin logged in successfully with ID: {}", admin.getAdminId());
+        return adminMapper.toResponseDTO(admin);
     }
 
     @Override

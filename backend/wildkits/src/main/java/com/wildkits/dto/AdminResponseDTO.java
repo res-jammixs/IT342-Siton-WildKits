@@ -1,5 +1,7 @@
 package com.wildkits.dto;
 
+import com.wildkits.enums.AdminRole;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +16,5 @@ public class AdminResponseDTO {
     private Long adminId;
     private String name;
     private String email;
+    private AdminRole role;
 }

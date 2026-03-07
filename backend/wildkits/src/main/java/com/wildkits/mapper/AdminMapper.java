@@ -13,6 +13,8 @@ public class AdminMapper {
         return Admin.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
+                .password(dto.getPassword())
+                .role(dto.getRole())
                 .build();
     }
 
@@ -21,6 +23,7 @@ public class AdminMapper {
                 .adminId(admin.getAdminId())
                 .name(admin.getName())
                 .email(admin.getEmail())
+                .role(admin.getRole())
                 .build();
     }
 }

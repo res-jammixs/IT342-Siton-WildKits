@@ -67,6 +67,14 @@ export interface UserResponse {
   createdAt: string;
 }
 
+export interface AdminResponse {
+  adminId: number;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
 export interface ProductData {
   title: string;
   description: string;
@@ -152,6 +160,54 @@ export const authAPI = {
   // Logout user
   logout: (): void => {
     localStorage.removeItem('wildkits_user');
+  },
+};
+
+// Admin API
+export const adminAPI = {
+  // Admin login
+  login: async (credentials: LoginCredentials): Promise<AdminResponse> => {
+    try {
+      console.log('Attempting admin login to:', `${API_BASE_URL}/admins/login`);
+      const response = await apiClient.post<AdminResponse>('/admins/login', credentials);
+      console.log('Admin login successful:', response.data);
+      return response.data;
+    } catch (error: unknown) {
+      console.error('Admin login error details:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string }; status?: number } };
+        console.error('API response status:', axiosError.response?.status);
+        console.error('API response data:', axiosError.response?.data);
+        if (axiosError.response?.data?.message) {
+          throw new Error(axiosError.response.data.message);
+        }
+      }
+      throw new Error('Admin login failed. Please check your credentials.');
+    }
+  },
+
+  // Get current admin from localStorage
+  getCurrentAdmin: (): AdminResponse | null => {
+    const admin = localStorage.getItem('wildkits_admin');
+    if (admin) {
+      try {
+        return JSON.parse(admin);
+      } catch (error) {
+        console.error('Error parsing admin data:', error);
+        return null;
+      }
+    }
+    return null;
+  },
+
+  // Save admin to localStorage
+  saveAdmin: (adminData: AdminResponse): void => {
+    localStorage.setItem('wildkits_admin', JSON.stringify(adminData));
+  },
+
+  // Logout admin
+  logout: (): void => {
+    localStorage.removeItem('wildkits_admin');
   },
 };
 
