@@ -4,12 +4,20 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingBag, Mail, Lock, Eye, EyeOff, User, GraduationCap,
-  ArrowRight, ArrowLeft, CheckCircle2, Sparkles, IdCard,
+  ArrowRight, ArrowLeft, CheckCircle2, Sparkles, IdCard, Upload, X, Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +32,7 @@ export default function Register() {
   const [currentStep, setCurrentStep] = useState(1);
   const [focused, setFocused] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   
   // Form data
   const [firstName, setFirstName] = useState("");
@@ -34,8 +43,10 @@ export default function Register() {
   const [yearLevel, setYearLevel] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [studentIdImage, setStudentIdImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
-  const { register: registerUser, isAuthenticated, user } = useAuth();
+  const { registerWithImage, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -44,6 +55,45 @@ export default function Register() {
     router.push('/dashboard');
     return null;
   }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File",
+          description: "Please upload an image file (JPG, PNG, etc.)",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setStudentIdImage(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setStudentIdImage(null);
+    setImagePreview(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +158,15 @@ export default function Register() {
       return;
     }
 
+    if (!studentIdImage) {
+      toast({
+        title: "Validation Error",
+        description: "Please upload your student ID image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (password.length < 6) {
       toast({
         title: "Validation Error",
@@ -128,8 +187,10 @@ export default function Register() {
 
     setIsSubmitting(true);
     try {
-      await registerUser(fullName, email, password, studentId, department, yearLevel);
-      router.push('/dashboard');
+      await registerWithImage(fullName, email, password, studentId, department, yearLevel, studentIdImage!);
+      
+      // Show success dialog
+      setShowSuccessDialog(true);
     } catch (error) {
       console.error('Registration error:', error);
     } finally {
@@ -152,7 +213,7 @@ export default function Register() {
           return;
         }
       } else if (currentStep === 2) {
-        if (!studentId.trim() || !/^\d{2}-\d{4}-\d{3}$/.test(studentId) || !department || !yearLevel) {
+        if (!studentId.trim() || !/^\d{2}-\d{4}-\d{3}$/.test(studentId) || !department || !yearLevel || !studentIdImage) {
           toast({
             title: "Complete Current Step",
             description: "Please fill in all fields before proceeding.",
@@ -209,6 +270,14 @@ export default function Register() {
         toast({
           title: "Validation Error",
           description: "Please select your year level.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!studentIdImage) {
+        toast({
+          title: "Validation Error",
+          description: "Please upload your student ID image.",
           variant: "destructive",
         });
         return;
@@ -424,6 +493,60 @@ export default function Register() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Student ID Image Upload */}
+                  <div className={inputWrapper("studentIdImage")}>
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Student ID Image
+                    </Label>
+                    <div className="mt-2">
+                      {!imagePreview ? (
+                        <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30 px-6 py-8 transition-colors hover:border-primary hover:bg-primary/5">
+                          <Upload className="mb-3 h-8 w-8 text-muted-foreground" />
+                          <span className="mb-1 text-sm font-medium text-foreground">Upload Student ID</span>
+                          <span className="text-xs text-muted-foreground">PNG, JPG up to 5MB</span>
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            onFocus={() => setFocused("studentIdImage")}
+                            onBlur={() => setFocused(null)}
+                          />
+                        </label>
+                      ) : (
+                        <div className="relative rounded-lg border-2 border-primary bg-primary/5 p-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-md bg-primary/10">
+                              <ImageIcon className="h-8 w-8 text-primary" />
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                              <p className="truncate text-sm font-medium">{studentIdImage?.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {(studentIdImage!.size / 1024).toFixed(2)} KB
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={removeImage}
+                              className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                            >
+                              <X className="h-5 w-5" />
+                            </button>
+                          </div>
+                          {imagePreview && (
+                            <div className="mt-3 overflow-hidden rounded-md">
+                              <img
+                                src={imagePreview}
+                                alt="Student ID Preview"
+                                className="h-auto w-full object-contain"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -608,6 +731,48 @@ export default function Register() {
           </motion.div>
         </div>
       </div>
+
+      {/* Success Dialog */}
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle2 className="h-10 w-10 text-green-600" />
+            </div>
+            <AlertDialogTitle className="text-center text-2xl">
+              Registration Successful!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              <div className="space-y-3 pt-2">
+                <p className="text-base">
+                  Welcome to <span className="font-semibold text-primary">WildKits</span>!
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Your account has been created successfully. Please log in with your credentials to continue.
+                </p>
+                <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="font-medium">⏳ Pending Verification</p>
+                  <p className="mt-1 text-xs">
+                    Your account is awaiting admin approval. You'll be notified once verified.
+                  </p>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button
+              onClick={() => {
+                setShowSuccessDialog(false);
+                router.push('/login');
+              }}
+              className="w-full"
+              size="lg"
+            >
+              Continue to Login
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

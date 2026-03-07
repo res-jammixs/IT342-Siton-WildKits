@@ -57,6 +57,16 @@ export interface UserRegistrationData {
   yearLevel: string;
 }
 
+export interface AuthenticationResponse {
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    status: string;
+  };
+  token: string;
+}
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -107,7 +117,52 @@ export interface ProductResponse {
 
 // Authentication API
 export const authAPI = {
-  // Register new user
+  // Register new user with student ID image
+  registerWithImage: async (
+    name: string,
+    email: string,
+    password: string,
+    studentId: string,
+    department: string,
+    yearLevel: string,
+    studentIdImage: File
+  ): Promise<AuthenticationResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append('fullName', name);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('studentId', studentId);
+      formData.append('department', department);
+      formData.append('yearLevel', yearLevel);
+      formData.append('studentIdImage', studentIdImage);
+
+      const response = await axios.post<AuthenticationResponse>(
+        `${API_BASE_URL}/auth/register`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          timeout: 30000, // 30 seconds for file upload
+        }
+      );
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string; message?: string } } };
+        if (axiosError.response?.data?.error) {
+          throw new Error(axiosError.response.data.error);
+        }
+        if (axiosError.response?.data?.message) {
+          throw new Error(axiosError.response.data.message);
+        }
+      }
+      throw new Error('Registration failed. Please try again.');
+    }
+  },
+
+  // Register new user (legacy - without image)
   register: async (userData: UserRegistrationData): Promise<UserResponse> => {
     try {
       const response = await apiClient.post<UserResponse>('/users/register', userData);

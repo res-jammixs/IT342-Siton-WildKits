@@ -48,7 +48,7 @@ logging:
 
 # JWT Configuration
 jwt:
-  secret: ${JWT_SECRET:wildkits_super_secret_key_change_in_production_2024_very_long_key_for_security}
+  secret: ${JWT_SECRET:wildkits_super_secret_key_change_in_production_2024_very_long_key_for_security_at_least_512_bits_required}
   expiration: 86400000 # 24 hours in milliseconds
 
 # Supabase Storage Configuration
@@ -61,5 +61,5 @@ jwt:
 #
 supabase:
   url: ${SUPABASE_URL:https://qgofibwesdynvlnwnkgz.supabase.co}
-  api-key: ${SUPABASE_API_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnb2ZpYndlc2R5bnZsbndua2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTQ0MTYsImV4cCI6MjA4ODM5MDQxNn0.6evSOfs-NEw8DFRQwFHvlxPXBkvAJ9JtKOMSqT9opL4}
+  api-key: ${SUPABASE_SERVICE_ROLE_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnb2ZpYndlc2R5bnZsbndua2d6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjgxNDQxNiwiZXhwIjoyMDg4MzkwNDE2fQ.y5Hon3e9s_OeGSUPzrf4xCYbASU0i-c_YpN_2Ns-iT8}
   storage-bucket: student-id-images

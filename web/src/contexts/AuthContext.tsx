@@ -147,6 +147,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const registerWithImage = async (
+    name: string,
+    email: string,
+    password: string,
+    studentId: string,
+    department: string,
+    yearLevel: string,
+    studentIdImage: File
+  ) => {
+    try {
+      setLoading(true);
+      // Register user with image - returns authentication response
+      await authAPI.registerWithImage(name, email, password, studentId, department, yearLevel, studentIdImage);
+      
+      // DO NOT auto-login - let the user login manually
+      // This ensures they see the success message and go through proper login flow
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Please try again.";
+      toast({
+        title: "Registration failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     authAPI.logout();
     adminAPI.logout();
@@ -162,6 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loading,
     login,
     register,
+    registerWithImage,
     logout,
     isAuthenticated: !!user,
   };

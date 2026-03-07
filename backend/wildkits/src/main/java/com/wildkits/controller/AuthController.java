@@ -18,7 +18,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
@@ -53,12 +53,18 @@ public class AuthController {
             UserResponseDTO user = userService.registerWithImage(
                     email, password, fullName, studentId, department, yearLevel, studentIdImage);
             
-            // Generate JWT token
-            String token = jwtTokenProvider.generateToken(
-                    user.getUserId(),
-                    user.getEmail(),
-                    "USER"
-            );
+            // Try to generate JWT token, but don't fail registration if it fails
+            String token = "";
+            try {
+                token = jwtTokenProvider.generateToken(
+                        user.getUserId(),
+                        user.getEmail(),
+                        "USER"
+                );
+            } catch (Exception jwtError) {
+                log.warn("JWT generation failed, but user was created successfully: {}", jwtError.getMessage());
+                // Continue without token - user can login later
+            }
             
             // Build response
             AuthenticationResponse response = AuthenticationResponse.builder()
