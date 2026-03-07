@@ -25,7 +25,7 @@ WildKits is a campus-exclusive peer-to-peer marketplace for CIT-U students (Tech
 ## 📁 Project Structure
 
 ```
-web/frontend/wildkits/
+web/
 │
 ├── app/
 │   ├── login/
@@ -59,10 +59,10 @@ web/frontend/wildkits/
 
 ### 1. Install Dependencies
 
-Navigate to the frontend directory and install packages:
+Navigate to the web directory and install packages:
 
 ```bash
-cd web/frontend/wildkits
+cd web
 npm install
 ```
 
