@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search, Bell, MessageSquare, Menu, X, ShoppingBag, User, Plus, Home, LayoutDashboard, History, LogOut
+  Search, Bell, MessageSquare, Menu, X, ShoppingBag, User, Plus, Home, LayoutDashboard, History, LogOut, Boxes
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
 const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/items", label: "Items", icon: Boxes },
   { href: "/list-item?tab=sell", label: "Sell / Lend", icon: Plus },
   { href: "/transactions", label: "History", icon: History },
 ];
@@ -36,7 +37,7 @@ export function Navbar() {
   // Filter out Home link when user is authenticated
   const filteredNavLinks = isAuthenticated 
     ? navLinks.filter(link => link.href !== '/')
-    : navLinks;
+    : navLinks.filter(link => link.href !== '/items');
 
   const handleLogout = () => {
     logout();
