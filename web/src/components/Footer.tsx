@@ -21,7 +21,7 @@ export function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-foreground">Marketplace</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/" className="hover:text-primary transition-colors">Browse Items</Link></li>
-              <li><Link href="/list-item" className="hover:text-primary transition-colors">List an Item</Link></li>
+              <li><Link href="/list-item?tab=sell" className="hover:text-primary transition-colors">List an Item</Link></li>
               <li><Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link></li>
             </ul>
           </div>

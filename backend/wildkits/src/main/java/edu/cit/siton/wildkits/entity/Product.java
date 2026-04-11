@@ -21,6 +21,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,13 +52,30 @@ public class Product {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(nullable = false, length = 100)
+    private String category;
+
+    @Column(name = "item_condition", length = 50)
+    private String condition;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "product_type", nullable = false)
     private ProductType type;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private ProductType legacyType;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "product_status", nullable = false)
     private ProductStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ProductStatus legacyStatus;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -74,4 +94,30 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_admin_id")
     private Admin deletedBy;
+
+    @PrePersist
+    @PreUpdate
+    private void syncLegacyStatus() {
+        if (type != null) {
+            legacyType = type;
+        }
+        if (status != null) {
+            legacyStatus = status;
+        }
+    }
+
+    @PostLoad
+    private void normalizeStatus() {
+        if (type == null && legacyType != null) {
+            type = legacyType;
+        } else if (type != null && legacyType == null) {
+            legacyType = type;
+        }
+
+        if (status == null && legacyStatus != null) {
+            status = legacyStatus;
+        } else if (status != null && legacyStatus == null) {
+            legacyStatus = status;
+        }
+    }
 }

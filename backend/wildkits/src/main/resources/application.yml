@@ -63,3 +63,4 @@ supabase:
   url: ${SUPABASE_URL:https://qgofibwesdynvlnwnkgz.supabase.co}
   api-key: ${SUPABASE_SERVICE_ROLE_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnb2ZpYndlc2R5bnZsbndua2d6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjgxNDQxNiwiZXhwIjoyMDg4MzkwNDE2fQ.y5Hon3e9s_OeGSUPzrf4xCYbASU0i-c_YpN_2Ns-iT8}
   storage-bucket: student-id-images
+  product-storage-bucket: ${SUPABASE_PRODUCT_STORAGE_BUCKET:student-id-images}

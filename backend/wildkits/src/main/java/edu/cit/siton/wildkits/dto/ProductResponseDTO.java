@@ -22,6 +22,9 @@ public class ProductResponseDTO {
     private String title;
     private String description;
     private BigDecimal price;
+    private String category;
+    private String condition;
+    private String imageUrl;
     private ProductType type;
     private ProductStatus status;
     private LocalDateTime createdAt;

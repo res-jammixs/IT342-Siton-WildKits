@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Send, Search, Phone, MoreVertical, Image } from "lucide-react";
+import { Send, Search, Phone, MoreVertical, Image, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
 const conversations: Array<{

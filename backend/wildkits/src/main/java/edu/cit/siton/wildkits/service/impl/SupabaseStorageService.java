@@ -25,6 +25,9 @@ public class SupabaseStorageService implements FileStorageService {
     @Value("${supabase.storage-bucket}")
     private String bucketName;
 
+    @Value("${supabase.product-storage-bucket:product-images}")
+    private String productBucketName;
+
     private final OkHttpClient client = new OkHttpClient();
     
     private void validateConfiguration() {
@@ -49,57 +52,19 @@ public class SupabaseStorageService implements FileStorageService {
 
     @Override
     public String uploadStudentIdImage(MultipartFile file, String userId) throws Exception {
-        // Validate configuration
-        validateConfiguration();
-        
-        // Validate file
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
+        return uploadImage(file, userId, "student_id", bucketName);
+    }
 
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("File size exceeds 5MB limit");
-        }
-
-        String contentType = file.getContentType();
-        if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new IllegalArgumentException("Invalid file type. Only JPEG and PNG images are allowed");
-        }
-
-        String fileExtension = getFileExtension(file.getOriginalFilename());
-        String fileName = "student_id_" + userId + "_" + UUID.randomUUID() + fileExtension;
-        
-        log.info("Uploading file to Supabase: {}", fileName);
-        
-        // Upload to Supabase Storage
-        String uploadUrl = String.format("%s/storage/v1/object/%s/%s", 
-                supabaseUrl, bucketName, fileName);
-
-        RequestBody requestBody = RequestBody.create(
-                file.getBytes(),
-                MediaType.parse(contentType)
-        );
-
-        Request request = new Request.Builder()
-                .url(uploadUrl)
-                .post(requestBody)
-                .addHeader("Authorization", "Bearer " + supabaseApiKey)
-                .addHeader("Content-Type", contentType)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                String errorBody = response.body() != null ? response.body().string() : "Unknown error";
-                log.error("Failed to upload file to Supabase: {}", errorBody);
-                throw new IOException("Failed to upload file: " + errorBody);
+    @Override
+    public String uploadProductImage(MultipartFile file, String userId) throws Exception {
+        try {
+            return uploadImage(file, userId, "product", productBucketName);
+        } catch (IOException ex) {
+            if (isBucketNotFoundError(ex) && !productBucketName.equals(bucketName)) {
+                log.warn("Product bucket '{}' not found. Falling back to default bucket '{}'.", productBucketName, bucketName);
+                return uploadImage(file, userId, "product", bucketName);
             }
-
-            // Return public URL
-            String publicUrl = String.format("%s/storage/v1/object/public/%s/%s", 
-                    supabaseUrl, bucketName, fileName);
-            
-            log.info("File uploaded successfully: {}", publicUrl);
-            return publicUrl;
+            throw ex;
         }
     }
 
@@ -138,5 +103,58 @@ public class SupabaseStorageService implements FileStorageService {
         if (filename == null) return ".jpg";
         int lastDot = filename.lastIndexOf('.');
         return lastDot == -1 ? ".jpg" : filename.substring(lastDot);
+    }
+
+    private String uploadImage(MultipartFile file, String userId, String prefix, String targetBucket) throws Exception {
+        validateConfiguration();
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("File size exceeds 5MB limit");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid file type. Only JPEG and PNG images are allowed");
+        }
+
+        String fileExtension = getFileExtension(file.getOriginalFilename());
+        String fileName = prefix + "_" + userId + "_" + UUID.randomUUID() + fileExtension;
+
+        log.info("Uploading file to Supabase bucket {}: {}", targetBucket, fileName);
+
+        String uploadUrl = String.format("%s/storage/v1/object/%s/%s", supabaseUrl, targetBucket, fileName);
+
+        RequestBody requestBody = RequestBody.create(file.getBytes(), MediaType.parse(contentType));
+
+        Request request = new Request.Builder()
+                .url(uploadUrl)
+                .post(requestBody)
+                .addHeader("Authorization", "Bearer " + supabaseApiKey)
+                .addHeader("Content-Type", contentType)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String errorBody = response.body() != null ? response.body().string() : "Unknown error";
+                log.error("Failed to upload file to Supabase: {}", errorBody);
+                throw new IOException("Failed to upload file: " + errorBody);
+            }
+
+            String publicUrl = String.format("%s/storage/v1/object/public/%s/%s", supabaseUrl, targetBucket, fileName);
+            log.info("File uploaded successfully: {}", publicUrl);
+            return publicUrl;
+        }
+    }
+
+    private boolean isBucketNotFoundError(IOException ex) {
+        String message = ex.getMessage();
+        if (message == null) {
+            return false;
+        }
+        return message.contains("Bucket not found") || message.contains("statusCode\":\"404\"");
     }
 }
