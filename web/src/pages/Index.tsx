@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Search, ArrowRight, BookOpen, Laptop, Shirt, FlaskConical, TrendingUp, Star } from "lucide-react";
@@ -7,17 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { ProductResponse, productsAPI } from "@/lib/api";
 
-const mockProducts = [
-  { id: "1", title: "Engineering Mathematics Textbook", price: 350, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop", category: "Textbooks", seller: "Maria S.", type: "sell" as const, condition: "Like New" },
-  { id: "2", title: "Scientific Calculator FX-991ES", price: 50, image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&h=300&fit=crop", category: "Electronics", seller: "John D.", type: "lend" as const, condition: "Good" },
-  { id: "3", title: "CIT-U PE Uniform Set", price: 200, image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&h=300&fit=crop", category: "Uniforms", seller: "Ana R.", type: "sell" as const, condition: "New" },
-  { id: "4", title: "Arduino Starter Kit", price: 75, image: "https://images.unsplash.com/photo-1553406830-ef2513450d76?w=400&h=300&fit=crop", category: "Electronics", seller: "Carlo M.", type: "lend" as const, condition: "Good" },
-  { id: "5", title: "Organic Chemistry Lab Manual", price: 150, image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=300&fit=crop", category: "Textbooks", seller: "Zia L.", type: "sell" as const, condition: "Used" },
-  { id: "6", title: "Laptop Stand Adjustable", price: 30, image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=300&fit=crop", category: "Gadgets", seller: "Ken P.", type: "lend" as const, condition: "Like New" },
-  { id: "7", title: "Drawing Tablet Wacom", price: 120, image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=300&fit=crop", category: "Art Supplies", seller: "Mia T.", type: "lend" as const, condition: "Good" },
-  { id: "8", title: "Physics Reviewer Bundle", price: 180, image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=300&fit=crop", category: "Textbooks", seller: "Leo G.", type: "sell" as const, condition: "New" },
-];
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&h=300&fit=crop";
 
 const quickCategories = [
   { icon: BookOpen, label: "Textbooks", count: 234 },
@@ -28,10 +20,43 @@ const quickCategories = [
 
 export default function Index() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [products, setProducts] = useState<ProductResponse[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProducts = async () => {
+      try {
+        const response = await productsAPI.getAll();
+        if (isMounted) {
+          setProducts(response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      } finally {
+        if (isMounted) {
+          setLoadingProducts(false);
+        }
+      }
+    };
+
+    fetchProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    if (selectedCategory === "all") {
+      return products;
+    }
+    return products.filter((product) => product.category?.toLowerCase() === selectedCategory.toLowerCase());
+  }, [products, selectedCategory]);
 
   return (
     <Layout>
-      {/* Hero */}
       <section className="bg-gradient-hero py-16 md:py-24">
         <div className="container">
           <motion.div
@@ -64,7 +89,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Quick Categories */}
       <section className="-mt-8 pb-8">
         <div className="container">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -89,7 +113,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Trending Section */}
       <section className="py-8">
         <div className="container">
           <div className="mb-6 flex items-center justify-between">
@@ -105,9 +128,25 @@ export default function Index() {
           <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
 
           <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {mockProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
+            {loadingProducts ? (
+              <p className="col-span-full text-sm text-muted-foreground">Loading listings...</p>
+            ) : filteredProducts.length === 0 ? (
+              <p className="col-span-full text-sm text-muted-foreground">No items found yet. Be the first to post one.</p>
+            ) : (
+              filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.productId}
+                  id={String(product.productId)}
+                  title={product.title}
+                  price={Number(product.price)}
+                  image={product.imageUrl || FALLBACK_IMAGE}
+                  category={product.category || "Other"}
+                  seller={product.userName || "Unknown seller"}
+                  type={product.type === "LEND" ? "lend" : "sell"}
+                  condition={product.condition}
+                />
+              ))
+            )}
           </div>
 
           <div className="mt-8 text-center">
@@ -118,7 +157,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA Banner */}
       <section className="py-8">
         <div className="container">
           <div className="overflow-hidden rounded-2xl bg-gradient-hero p-8 md:p-12">
@@ -130,7 +168,7 @@ export default function Index() {
                 List your items in seconds and reach thousands of CIT-U students.
               </p>
               <Button variant="accent" size="lg" className="gap-2" asChild>
-                <Link href="/list-item">
+                <Link href="/list-item?tab=sell">
                   Start Listing <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

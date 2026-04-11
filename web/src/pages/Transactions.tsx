@@ -84,7 +84,7 @@ export default function Transactions() {
                   <h3 className="font-display text-lg font-semibold text-foreground mb-1">No transactions yet</h3>
                   <p className="text-sm text-muted-foreground mb-4">Your transaction history will appear here once you buy, sell, or lend items.</p>
                   <Button className="gap-2" asChild>
-                    <Link href="/list-item"><Plus className="h-4 w-4" /> List Your First Item</Link>
+                    <Link href="/list-item?tab=sell"><Plus className="h-4 w-4" /> List Your First Item</Link>
                   </Button>
                 </div>
               </Card>

@@ -67,7 +67,7 @@ export default function Dashboard() {
             <p className="text-sm text-muted-foreground">Here's your marketplace overview.</p>
           </div>
           <Button className="gap-2" asChild>
-            <Link href="/list-item"><Plus className="h-4 w-4" /> List New Item</Link>
+            <Link href="/list-item?tab=sell"><Plus className="h-4 w-4" /> List New Item</Link>
           </Button>
         </div>
 
@@ -129,7 +129,7 @@ export default function Dashboard() {
                     <p className="text-sm font-medium text-foreground">No transactions yet</p>
                     <p className="mt-1 text-xs text-muted-foreground">Your recent transactions will appear here</p>
                     <Button className="mt-4 gap-2" size="sm" asChild>
-                      <Link href="/list-item"><Plus className="h-4 w-4" /> List Your First Item</Link>
+                      <Link href="/list-item?tab=sell"><Plus className="h-4 w-4" /> List Your First Item</Link>
                     </Button>
                   </div>
                 )}
@@ -197,7 +197,7 @@ export default function Dashboard() {
               <h3 className="mb-3 font-display text-sm font-semibold text-foreground">Quick Actions</h3>
               <div className="space-y-2">
                 <Button variant="outline" className="w-full justify-start gap-2 text-sm" size="sm" asChild>
-                  <Link href="/list-item"><Plus className="h-4 w-4" /> List New Item</Link>
+                  <Link href="/list-item?tab=sell"><Plus className="h-4 w-4" /> List New Item</Link>
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2 text-sm" size="sm" asChild>
                   <Link href="/messages"><MessageSquare className="h-4 w-4" /> View Messages</Link>

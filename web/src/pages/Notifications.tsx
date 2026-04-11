@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Bell, ShoppingBag, MessageSquare, CheckCircle2, AlertTriangle, Info, Trash2 } from "lucide-react";
+import { Bell, ShoppingBag, MessageSquare, CheckCircle2, AlertTriangle, Info, Trash2, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 const notifications: Array<{
   id: string;
   type: string;
-  icon: any;
+  icon: LucideIcon;
   title: string;
   desc: string;
   time: string;

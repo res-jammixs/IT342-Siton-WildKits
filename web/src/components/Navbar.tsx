@@ -22,7 +22,7 @@ import {
 const navLinks = [
   { href: "/", label: "Home", icon: Home },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/list-item", label: "Sell / Lend", icon: Plus },
+  { href: "/list-item?tab=sell", label: "Sell / Lend", icon: Plus },
   { href: "/transactions", label: "History", icon: History },
 ];
 
@@ -55,7 +55,8 @@ export function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {filteredNavLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const hrefPath = link.href.split("?")[0];
+            const isActive = pathname === hrefPath;
             return (
               <Link
                 key={link.href}
@@ -174,7 +175,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                    pathname === link.href
+                    pathname === link.href.split("?")[0]
                       ? "bg-secondary text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}

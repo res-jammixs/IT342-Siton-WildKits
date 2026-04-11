@@ -34,6 +34,16 @@ public class ProductRequestDTO {
     @Digits(integer = 8, fraction = 2, message = "Price must have at most 8 integer digits and 2 decimal places")
     private BigDecimal price;
 
+    @NotBlank(message = "Category is required")
+    @Size(min = 2, max = 100, message = "Category must be between 2 and 100 characters")
+    private String category;
+
+    @Size(max = 50, message = "Condition must be at most 50 characters")
+    private String condition;
+
+    @Size(max = 500, message = "Image URL must be at most 500 characters")
+    private String imageUrl;
+
     @NotNull(message = "Product type is required")
     private ProductType type;
 
