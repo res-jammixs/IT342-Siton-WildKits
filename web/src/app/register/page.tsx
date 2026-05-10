@@ -1,6 +1,6 @@
 'use client';
 
-import RegisterPage from '@/pages/Register';
+import RegisterPage from '@/features/auth/RegisterPage';
 
 export default function Register() {
   return <RegisterPage />;
