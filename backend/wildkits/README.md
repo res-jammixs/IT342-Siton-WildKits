@@ -40,10 +40,15 @@ The application connects to **Supabase PostgreSQL** using the Session Pooler.
 Create a `.env` file in the project root (copy from `.env.example`):
 
 ```env
-SUPABASE_DB_URL=jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres
-SUPABASE_DB_USER=postgres.qgofibwesdynvlnwnkgz
-SUPABASE_DB_PASSWORD=wildkits_123!
+SUPABASE_DB_URL=jdbc:postgresql://db.YOUR_PROJECT_REF.supabase.co:5432/postgres
+SUPABASE_DB_USER=postgres
+SUPABASE_DB_PASSWORD=your_database_password
+
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
+
+The backend loads `.env` automatically via `spring.config.import`.
 
 ### Connection Pool Settings
 
