@@ -7,5 +7,6 @@
       "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot",
       "default": true
     }
-  ]
+  ],
+  "java.compile.nullAnalysis.mode": "automatic"
 }

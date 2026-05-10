@@ -13,13 +13,13 @@ import javax.sql.DataSource;
 @Slf4j
 public class DatabaseConfig {
 
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.url:}")
     private String url;
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.username:}")
     private String username;
 
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.password:}")
     private String password;
 
     @Value("${spring.datasource.hikari.maximum-pool-size:10}")
@@ -34,11 +34,15 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         log.info("Configuring HikariCP DataSource for Supabase PostgreSQL");
+
+        String resolvedUrl = requireValue("SUPABASE_DB_URL / spring.datasource.url", url);
+        String resolvedUsername = requireValue("SUPABASE_DB_USER / spring.datasource.username", username);
+        String resolvedPassword = requireValue("SUPABASE_DB_PASSWORD / spring.datasource.password", password);
         
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(url);
-        config.setUsername(username);
-        config.setPassword(password);
+        config.setJdbcUrl(resolvedUrl);
+        config.setUsername(resolvedUsername);
+        config.setPassword(resolvedPassword);
         config.setDriverClassName("org.postgresql.Driver");
         
         // HikariCP settings
@@ -60,5 +64,14 @@ public class DatabaseConfig {
         log.info("HikariCP configured successfully with max pool size: {}", maximumPoolSize);
         
         return new HikariDataSource(config);
+    }
+
+    private String requireValue(String name, String value) {
+        String trimmed = value == null ? "" : value.trim();
+        if (trimmed.isEmpty()) {
+            throw new IllegalStateException("Missing datasource configuration: " + name
+                    + ". Set it in environment variables or .env.");
+        }
+        return trimmed;
     }
 }
