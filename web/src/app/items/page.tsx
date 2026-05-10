@@ -1,7 +1,7 @@
 'use client';
 
-import ItemsView from '@/pages/Items';
+import ItemsView from '@/features/marketplace/ItemsPage';
 
-export default function ItemsPage() {
+export default function Items() {
   return <ItemsView />;
 }

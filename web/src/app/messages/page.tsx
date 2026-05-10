@@ -1,6 +1,6 @@
 'use client';
 
-import MessagesPage from '@/pages/Messages';
+import MessagesPage from '@/features/communication/MessagesPage';
 
 export default function Messages() {
   return <MessagesPage />;
